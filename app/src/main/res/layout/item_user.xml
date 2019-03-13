@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@android:color/background_light"
+    android:layout_marginTop="2dp"
+    android:layout_marginBottom="2dp"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="80dp">
+<ImageView
+    android:id="@+id/image_avatar"
+    android:layout_width="80dp"
+    android:layout_height="80dp"
+    android:src="@color/colorPrimaryDark"
+    android:layout_marginStart="@dimen/avatar_margin"
+    android:layout_marginEnd="@dimen/avatar_margin"
+    android:padding="@dimen/avatar_margin"/>
+
+    <TextView
+        android:id="@+id/text_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toEndOf="@id/image_avatar"
+        android:textSize="20sp"
+        tools:text="Vasya"/>
+</RelativeLayout>
