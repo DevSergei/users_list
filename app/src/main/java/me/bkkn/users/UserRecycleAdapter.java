@@ -16,7 +16,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class UserRecycleAdapter extends RecyclerView.Adapter<UserRecycleAdapter.UserViewHolder> {
-    ArrayList<User>userList = new ArrayList<>();
+    private ArrayList<User>userList = new ArrayList<>();
+    private LoadMoreListener loadMoreListener;
+
 
     @NonNull
     @Override
@@ -36,6 +38,10 @@ public class UserRecycleAdapter extends RecyclerView.Adapter<UserRecycleAdapter.
                 .placeholder(R.drawable.avatar_placeholder)
                 .error(R.drawable.avatar_placeholder))
             .into(holder.avatar);
+        if(position == getItemCount() - 1 && loadMoreListener != null){
+            loadMoreListener.loadMoreUsers(user.getUserId());
+        }
+
     }
 
     @Override
@@ -49,6 +55,9 @@ public class UserRecycleAdapter extends RecyclerView.Adapter<UserRecycleAdapter.
         notifyItemRangeInserted(lastPosition,users.size());
     }
 
+    public void setLoadMoreListener(LoadMoreListener loadMoreListener) {
+        this.loadMoreListener = loadMoreListener;
+    }
 
     public class UserViewHolder extends RecyclerView.ViewHolder{
 
@@ -60,5 +69,10 @@ public class UserRecycleAdapter extends RecyclerView.Adapter<UserRecycleAdapter.
             name = itemView.findViewById(R.id.text_name);
             avatar = itemView.findViewById(R.id.image_avatar);
         }
+    }
+
+    public interface LoadMoreListener {
+        public void loadMoreUsers(long userId);
+
     }
 }

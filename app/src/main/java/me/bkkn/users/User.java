@@ -7,10 +7,12 @@ import java.util.Objects;
 public final class User {
     @SerializedName("login") private String name;
     @SerializedName("avatar_url") private String avatar;
+    @SerializedName("id") private long userId;
 
-    public User(String name, String avatar) {
+    public User(String name, String avatar, long userId) {
         this.name = name;
         this.avatar = avatar;
+        this.userId = userId;
     }
 
     public String getName() {
@@ -19,6 +21,10 @@ public final class User {
 
     public String getAvatar() {
         return avatar;
+    }
+
+    public long getUserId() {
+        return userId;
     }
 
     @Override

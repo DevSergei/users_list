@@ -8,5 +8,5 @@ import retrofit2.http.Query;
 
 public interface GitHubService {
     @GET("users")
-    Call<List<User>> getUsers(@Query("since") int id);
+    Call<List<User>> getUsers(@Query("since") long id);
 }

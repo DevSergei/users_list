@@ -36,6 +36,7 @@ public class GitHubUsersFragment extends Fragment {
     private UserRecycleAdapter adapter;
     private GitHubService gitHubService;
     private Call<List<User>> call;
+    private Call<List<User>> callMoreUsers;
 
 
     @Override
@@ -63,6 +64,24 @@ public class GitHubUsersFragment extends Fragment {
             }
         });
 
+        adapter.setLoadMoreListener(userId -> {
+            if(callMoreUsers != null && !callMoreUsers.isExecuted()){
+                return;
+            }
+            callMoreUsers =  gitHubService.getUsers(0);
+            callMoreUsers.enqueue(new Callback<List<User>>() {
+                @Override
+                public void onResponse(Call<List<User>> call, Response<List<User>> response) {
+                    adapter.addUsers(response.body());
+                }
+
+                @Override
+                public void onFailure(Call<List<User>> call, Throwable t) {
+                    Toast.makeText(getContext(), R.string.error_message, Toast.LENGTH_SHORT).show();
+                }
+            });
+        });
+
         return view;
     }
 
@@ -76,11 +95,11 @@ public class GitHubUsersFragment extends Fragment {
     }
 
     private void createRetrofitInstance(){
-//        HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
-//        ChuckInterceptor chuckInterceptor = new ChuckInterceptor(getContext());
+        HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
+        ChuckInterceptor chuckInterceptor = new ChuckInterceptor(getContext());
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
-//                .addNetworkInterceptor(httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY))
-//                .addNetworkInterceptor(chuckInterceptor)
+                .addNetworkInterceptor(httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY))
+                .addNetworkInterceptor(chuckInterceptor)
                 .build();
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://api.github.com/")
