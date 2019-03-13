@@ -85,6 +85,8 @@ public class GitHubUsersFragment extends Fragment {
         return view;
     }
 
+
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();
