@@ -1,7 +1,6 @@
 package me.bkkn.users;
 
 import androidx.appcompat.app.AppCompatActivity;
-import me.bkkn.users.overflow.StackOverflowFragment;
 
 import android.os.Bundle;
 import android.view.Menu;
@@ -16,7 +15,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new GitHubUsersFragment())
+                    .add(R.id.container, UsersFragment.newInstance(true))
                     .commit();
         }
     }
@@ -31,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId() == R.id.action_settings){
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.container, new StackOverflowFragment())
+                    .replace(R.id.container, UsersFragment.newInstance(false))
                     .addToBackStack("backtack")
                     .commit();
         }

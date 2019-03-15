@@ -5,9 +5,9 @@ import com.google.gson.annotations.SerializedName;
 import java.util.Objects;
 
 public final class User {
-    @SerializedName("login") private String name;
-    @SerializedName("avatar_url") private String avatar;
-    @SerializedName("id") private long userId;
+    private String name;
+    private String avatar;
+    private long userId;
 
     public User(String name, String avatar, long userId) {
         this.name = name;

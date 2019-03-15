@@ -34,7 +34,7 @@ public class UserRecycleAdapter extends RecyclerView.Adapter<UserRecycleAdapter.
         holder.name.setText(user.getName());
         Glide.with(holder.itemView.getContext())
             .load(user.getAvatar())
-            .apply(RequestOptions.centerCropTransform()
+            .apply(RequestOptions.circleCropTransform()
                 .placeholder(R.drawable.avatar_placeholder)
                 .error(R.drawable.avatar_placeholder))
             .into(holder.avatar);
