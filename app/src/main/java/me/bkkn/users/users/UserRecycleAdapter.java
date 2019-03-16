@@ -1,4 +1,4 @@
-package me.bkkn.users;
+package me.bkkn.users.users;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +14,7 @@ import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import me.bkkn.users.R;
 
 public class UserRecycleAdapter extends RecyclerView.Adapter<UserRecycleAdapter.UserViewHolder> {
     private ArrayList<User>userList = new ArrayList<>();

@@ -1,6 +1,4 @@
-package me.bkkn.users;
-
-import com.google.gson.annotations.SerializedName;
+package me.bkkn.users.users;
 
 import java.util.Objects;
 

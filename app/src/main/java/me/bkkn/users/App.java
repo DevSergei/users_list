@@ -4,11 +4,12 @@ import android.app.Application;
 
 import com.readystatesoftware.chuck.ChuckInterceptor;
 
-import me.bkkn.users.github.GitHubService;
-import me.bkkn.users.overflow.StackOverFlowService;
+import me.bkkn.users.users.github.GitHubService;
+import me.bkkn.users.users.overflow.StackOverFlowService;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class App extends Application {
@@ -42,6 +43,7 @@ public class App extends Application {
                 .baseUrl("https://api.github.com/")
                 .client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .build();
         gitHubService = gitHubRetrofit.create(GitHubService.class);
 
@@ -49,6 +51,7 @@ public class App extends Application {
                 .baseUrl("https://api.stackexchange.com/2.2/")
                 .client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .build();
         stackOverFlowService = stackOverflowRetrofit.create(StackOverFlowService.class);
 
