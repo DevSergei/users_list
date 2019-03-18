@@ -20,7 +20,7 @@ public class App extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        createNetworkServises();
+        createNetworkServices();
     }
 
     public GitHubService getGitHubService() {
@@ -31,7 +31,7 @@ public class App extends Application {
         return stackOverFlowService;
     }
 
-    private void createNetworkServises(){
+    private void createNetworkServices(){
         HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
         ChuckInterceptor chuckInterceptor = new ChuckInterceptor(this);
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
@@ -54,7 +54,6 @@ public class App extends Application {
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .build();
         stackOverFlowService = stackOverflowRetrofit.create(StackOverFlowService.class);
-
     }
 
 }

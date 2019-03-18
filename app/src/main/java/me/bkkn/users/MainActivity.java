@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
         if(item.getItemId() == R.id.action_settings){
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.container, UsersFragment.newInstance(false))
-                    .addToBackStack("backtack")
+                    .addToBackStack("backstack")
                     .commit();
         }
 

@@ -19,6 +19,7 @@ import me.bkkn.users.users.overflow.OverflowUsersUserModel;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import java.util.List;
@@ -26,12 +27,14 @@ import java.util.List;
 public class UsersFragment extends Fragment implements UserPresenter.View {
 
     public static final String GITHUB = "GITHUB";
+    private static UserPresenter presenter;
     @BindView(R.id.recycler)
     RecyclerView recyclerView;
+    @BindView(R.id.progress)
+    ProgressBar progressBar;
 
     private Unbinder unbinder;
     private UserRecycleAdapter adapter;
-    private UserPresenter presenter;
 
     public static UsersFragment newInstance(boolean isGitHub) {
         Bundle args = new Bundle();
@@ -46,6 +49,10 @@ public class UsersFragment extends Fragment implements UserPresenter.View {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_git_hub_users, container, false);
         unbinder = ButterKnife.bind(this, view);
+        adapter = new UserRecycleAdapter();
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setAdapter(adapter);
+        recyclerView.setHasFixedSize(true);
 
         UserModel userModel;
         if (getArguments().getBoolean(GITHUB)) {
@@ -54,13 +61,10 @@ public class UsersFragment extends Fragment implements UserPresenter.View {
             userModel = new OverflowUsersUserModel(((App) getActivity().getApplication()).getStackOverFlowService());
         }
 
-        presenter = new UserPresenter(userModel,this);
-        adapter = new UserRecycleAdapter();
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerView.setAdapter(adapter);
-        recyclerView.setHasFixedSize(true);
-
-        presenter.loadUsers();
+        if (presenter == null) {
+            presenter = new UserPresenter(userModel);
+        }
+        presenter.attachView(this);
 
         return view;
     }
@@ -68,17 +72,24 @@ public class UsersFragment extends Fragment implements UserPresenter.View {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        presenter.stopLoading();
+        presenter.detachView();
+        if (getActivity().isFinishing()) {
+            presenter.stopLoading();
+            presenter = null;
+        }
         unbinder.unbind();
     }
 
     @Override
     public void onUserListLoaded(List<User> userList) {
         adapter.addUsers(userList);
+        progressBar.setVisibility(View.GONE);
     }
 
     @Override
     public void onError(String errorMessage) {
         Toast.makeText(getContext(), R.string.error_message, Toast.LENGTH_SHORT).show();
+        progressBar.setVisibility(View.GONE);
+
     }
 }

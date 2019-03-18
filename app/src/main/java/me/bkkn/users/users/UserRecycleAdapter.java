@@ -42,7 +42,6 @@ public class UserRecycleAdapter extends RecyclerView.Adapter<UserRecycleAdapter.
         if(position == getItemCount() - 1 && loadMoreListener != null){
             loadMoreListener.loadMoreUsers(user.getUserId());
         }
-
     }
 
     @Override
@@ -74,6 +73,5 @@ public class UserRecycleAdapter extends RecyclerView.Adapter<UserRecycleAdapter.
 
     public interface LoadMoreListener {
         public void loadMoreUsers(long userId);
-
     }
 }
