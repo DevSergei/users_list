@@ -1,6 +1,7 @@
 package me.bkkn.users;
 
 import androidx.appcompat.app.AppCompatActivity;
+import me.bkkn.users.users.UserDataBase;
 import me.bkkn.users.users.UsersFragment;
 
 import android.os.Bundle;
@@ -16,6 +17,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+        UserDataBase base = new UserDataBase(getBaseContext());
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
