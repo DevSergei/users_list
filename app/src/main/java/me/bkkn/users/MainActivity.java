@@ -7,6 +7,9 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import static me.bkkn.users.users.UsersFragment.GITHUB;
+import static me.bkkn.users.users.UsersFragment.STACK_OVERFLOW;
+
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -16,7 +19,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, UsersFragment.newInstance(true))
+                    .add(R.id.container, UsersFragment.newInstance(GITHUB))
                     .commit();
         }
     }
@@ -31,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId() == R.id.action_settings){
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.container, UsersFragment.newInstance(false))
+                    .replace(R.id.container, UsersFragment.newInstance(STACK_OVERFLOW))
                     .addToBackStack("backstack")
                     .commit();
         }

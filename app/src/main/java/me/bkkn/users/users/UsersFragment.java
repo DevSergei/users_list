@@ -9,8 +9,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 import me.bkkn.users.App;
 import me.bkkn.users.R;
 import me.bkkn.users.users.github.GitHubUsersUserModel;
@@ -26,8 +24,10 @@ import java.util.List;
 
 public class UsersFragment extends Fragment implements UserPresenter.View {
 
-    public static final String GITHUB = "GITHUB";
-    private static UserPresenter presenter;
+    public static final String KEY = "USER_MODEL";
+    public static final String GITHUB = "GitHub";
+    public static final String STACK_OVERFLOW = "Stack";
+
     @BindView(R.id.recycler)
     RecyclerView recyclerView;
     @BindView(R.id.progress)
@@ -35,10 +35,12 @@ public class UsersFragment extends Fragment implements UserPresenter.View {
 
     private Unbinder unbinder;
     private UserRecycleAdapter adapter;
+    private UserPresenter presenter;
+    private String key;
 
-    public static UsersFragment newInstance(boolean isGitHub) {
+    public static UsersFragment newInstance(String modelName) {
         Bundle args = new Bundle();
-        args.putBoolean(GITHUB, isGitHub);
+        args.putString(KEY, modelName);
         UsersFragment fragment = new UsersFragment();
         fragment.setArguments(args);
         return fragment;
@@ -55,14 +57,16 @@ public class UsersFragment extends Fragment implements UserPresenter.View {
         recyclerView.setHasFixedSize(true);
 
         UserModel userModel;
-        if (getArguments().getBoolean(GITHUB)) {
+        key = getArguments().getString(KEY);
+        if (key.equals(GITHUB)) {
             userModel = new GitHubUsersUserModel(((App) getActivity().getApplication()).getGitHubService());
         }else{
             userModel = new OverflowUsersUserModel(((App) getActivity().getApplication()).getStackOverFlowService());
         }
-
+        presenter = ((App) getActivity().getApplication()).getUserPresenter(key);
         if (presenter == null) {
-            presenter = new UserPresenter(userModel);
+            presenter = new UserPresenter(userModel, (((App) getActivity().getApplication()).getUserDatabase()));
+            ((App) getActivity().getApplication()).setUserPresenter(key, presenter);
         }
         presenter.attachView(this);
 
@@ -73,9 +77,10 @@ public class UsersFragment extends Fragment implements UserPresenter.View {
     public void onDestroyView() {
         super.onDestroyView();
         presenter.detachView();
-        if (getActivity().isFinishing()) {
+        if (isRemoving()) {
             presenter.stopLoading();
             presenter = null;
+            ((App) getActivity().getApplication()).setUserPresenter(key,null);
         }
         unbinder.unbind();
     }

@@ -1,9 +1,13 @@
 package me.bkkn.users.users;
 
+import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
@@ -16,12 +20,14 @@ public class UserPresenter {
     }
 
     private UserModel userModel;
+    private SQLiteDatabase sqLiteDatabase;
     private View view;
     private Disposable disposable;
     private List<User> userList;
 
-    public UserPresenter(UserModel userModel) {
+    public UserPresenter(UserModel userModel, SQLiteDatabase sqLiteDatabase) {
         this.userModel = userModel;
+        this.sqLiteDatabase = sqLiteDatabase;
     }
 
     public void attachView(View view) {
@@ -44,13 +50,16 @@ public class UserPresenter {
 
     private void loadUsers() {
         disposable = userModel.getUsers()
-            .delay(5, TimeUnit.SECONDS)
-            .doOnSuccess(users -> userList = users)
+//                .delay(5, TimeUnit.SECONDS)
+                .doOnSuccess(list -> userList = list)
+                .doOnSuccess(list -> UserDataBase.addUsers(list, sqLiteDatabase))
 //                .doOnSuccess(users-> Collections.sort(users,(user1,user2)-> user1.getName().compareTo(user2.getName())))
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .filter(usera -> view != null)
-            .subscribe(users -> view.onUserListLoaded(users),
-                    error -> view.onError(error.getMessage()));
+                .doOnError(error -> Log.d("DDDD", error.getMessage()))
+                .onErrorResumeNext(error -> UserDataBase.getAllUsers(sqLiteDatabase))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .filter(users -> view != null)
+                .subscribe(users -> view.onUserListLoaded(users), error -> view.onError(error.getMessage()));
+        ;
     }
 }
