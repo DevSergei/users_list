@@ -29,7 +29,7 @@ public class UserDataBase extends SQLiteOpenHelper {
     public static final String[] USER_COLUMNS = new String[]{ID, NAME, AVATAR, USER_ID};
 
     public static final String CREATE_USERS_TABLE = "create table " + USERS_TABLE_NAME
-            + " ( " + ID + "integer primary key autoincrement, "
+            + " ( " + ID + " integer primary key autoincrement, "
             + NAME + " TEXT NOT NULL unique, "
             + AVATAR + " TEXT NOT NULL, "
             + USER_ID + " integer NOT NULL DEFAULT 0)";
@@ -67,7 +67,7 @@ public class UserDataBase extends SQLiteOpenHelper {
     }
 
     public static void deleteUsers(SQLiteDatabase sqLiteDatabase) {
-        Completable.fromAction(() -> sqLiteDatabase.delete(USERS_TABLE_NAME, null, null));
+        sqLiteDatabase.delete(USERS_TABLE_NAME, null, null);
     }
 
     public static Single<ArrayList<User>> getAllUsers(SQLiteDatabase db) {
