@@ -1,4 +1,4 @@
-package me.bkkn.users;
+package me.bkkn.users.users;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +14,7 @@ import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import me.bkkn.users.R;
 
 public class UserRecycleAdapter extends RecyclerView.Adapter<UserRecycleAdapter.UserViewHolder> {
     private ArrayList<User>userList = new ArrayList<>();
@@ -34,14 +35,13 @@ public class UserRecycleAdapter extends RecyclerView.Adapter<UserRecycleAdapter.
         holder.name.setText(user.getName());
         Glide.with(holder.itemView.getContext())
             .load(user.getAvatar())
-            .apply(RequestOptions.centerCropTransform()
+            .apply(RequestOptions.circleCropTransform()
                 .placeholder(R.drawable.avatar_placeholder)
                 .error(R.drawable.avatar_placeholder))
             .into(holder.avatar);
         if(position == getItemCount() - 1 && loadMoreListener != null){
             loadMoreListener.loadMoreUsers(user.getUserId());
         }
-
     }
 
     @Override
@@ -73,6 +73,5 @@ public class UserRecycleAdapter extends RecyclerView.Adapter<UserRecycleAdapter.
 
     public interface LoadMoreListener {
         public void loadMoreUsers(long userId);
-
     }
 }
