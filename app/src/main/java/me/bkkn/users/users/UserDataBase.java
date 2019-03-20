@@ -67,7 +67,7 @@ public class UserDataBase extends SQLiteOpenHelper {
     }
 
     public static void deleteUsers(SQLiteDatabase sqLiteDatabase) {
-        Completable.fromAction(() -> sqLiteDatabase.delete(USERS_TABLE_NAME, null, null));
+        sqLiteDatabase.delete(USERS_TABLE_NAME, null, null);
     }
 
     public static Single<ArrayList<User>> getAllUsers(SQLiteDatabase db) {
