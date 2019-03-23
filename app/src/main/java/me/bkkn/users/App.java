@@ -10,6 +10,9 @@ import com.readystatesoftware.chuck.ChuckInterceptor;
 import java.io.IOException;
 import java.util.HashMap;
 
+import androidx.room.Room;
+import androidx.room.RoomDatabase;
+import me.bkkn.users.db.AppDatabase;
 import me.bkkn.users.network.AddTokenInterceptor;
 import me.bkkn.users.network.ReceivedTokenInterceptor;
 import me.bkkn.users.users.UserDataBase;
@@ -34,14 +37,25 @@ public class App extends Application {
     SharedPreferences preferences;
     UserDataBase userDatabaseHelper;
     SQLiteDatabase userDatabase;
+    AppDatabase database;
 
     @Override
     public void onCreate() {
         super.onCreate();
+
         userDatabaseHelper = new UserDataBase(this);
         userDatabase = userDatabaseHelper.getWritableDatabase();
+
+        database = Room.databaseBuilder(this,AppDatabase.class,"MyDatabase")
+                .allowMainThreadQueries()
+                .build();
+
         preferences = PreferenceManager.getDefaultSharedPreferences(this);
         createNetworkServices();
+    }
+
+    public AppDatabase getDatabase() {
+        return database;
     }
 
     public GitHubService getGitHubService() {
@@ -96,7 +110,7 @@ public class App extends Application {
         return userPresenters.get(key);
     }
 
-    public SQLiteDatabase getUserDatabase() {
-        return userDatabase;
-    }
+ //   public SQLiteDatabase getUserDatabase() {
+//        return userDatabase;
+ //   }
 }

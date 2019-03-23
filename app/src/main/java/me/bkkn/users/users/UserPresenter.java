@@ -11,6 +11,7 @@ import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+import me.bkkn.users.db.AppDatabase;
 
 public class UserPresenter {
     public interface View {
@@ -20,14 +21,14 @@ public class UserPresenter {
     }
 
     private UserModel userModel;
-    private SQLiteDatabase sqLiteDatabase;
+    private AppDatabase database;
     private View view;
     private Disposable disposable;
     private List<User> userList;
 
-    public UserPresenter(UserModel userModel, SQLiteDatabase sqLiteDatabase) {
+    public UserPresenter(UserModel userModel, AppDatabase database) {
         this.userModel = userModel;
-        this.sqLiteDatabase = sqLiteDatabase;
+        this.database = database;
     }
 
     public void attachView(View view) {
@@ -56,13 +57,12 @@ public class UserPresenter {
                 .doOnSuccess(list -> UserDataBase.addUsers(list, sqLiteDatabase))
 //                .doOnSuccess(users-> Collections.sort(users,(user1,user2)-> user1.getName().compareTo(user2.getName())))
                 .doOnError(error -> Log.d("DDDD", error.getMessage()))
-                .onErrorResumeNext(error -> UserDataBase.getAllUsers(sqLiteDatabase)
+                .onErrorResumeNext(error -> getDataBase().getAllUsers(sqLiteDatabase)
                         .flatMap(users -> users.isEmpty() ? Single.error(new RuntimeException("No users in DB")) : Single.just(users))
                 )
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .filter(users -> view != null)
                 .subscribe(users -> view.onUserListLoaded(users), error -> view.onError(error.getMessage()));
-        ;
     }
 }

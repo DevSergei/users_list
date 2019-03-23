@@ -2,10 +2,19 @@ package me.bkkn.users.users;
 
 import java.util.Objects;
 
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
+@Entity(tableName = "user")
 public final class User {
-    private String name;
-    private String avatar;
+    @PrimaryKey(autoGenerate = true)
     private long userId;
+//    @ColumnInfo(name = "title")
+    private String name;
+
+    private String avatar;
+
 
     public User(String name, String avatar, long userId) {
         this.name = name;
