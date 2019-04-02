@@ -1,23 +1,21 @@
 package me.bkkn.users;
 
 import androidx.appcompat.app.AppCompatActivity;
-import me.bkkn.users.users.UserDataBase;
-import me.bkkn.users.users.UsersFragment;
+import androidx.appcompat.widget.SearchView;
+import me.bkkn.users.user.UserDataBase;
+import me.bkkn.users.user.UsersFragment;
 
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.SearchView;
-import android.widget.TextView;
 
-import com.jakewharton.rxbinding3.widget.RxSearchView;
-import com.jakewharton.rxbinding3.widget.RxTextView;
+import com.jakewharton.rxbinding3.appcompat.RxSearchView;
 
 import java.util.concurrent.TimeUnit;
 
-import static me.bkkn.users.users.UsersFragment.GITHUB;
-import static me.bkkn.users.users.UsersFragment.STACK_OVERFLOW;
+import static me.bkkn.users.user.UsersFragment.GITHUB;
+import static me.bkkn.users.user.UsersFragment.STACK_OVERFLOW;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -28,10 +26,9 @@ public class MainActivity extends AppCompatActivity {
 
         SearchView searchView = findViewById(R.id.search_view);
 
-//        RxSearchView.queryTextChangeEvents(searchView)
-//                .debounce(5000, TimeUnit.MILLISECONDS)
-//                .subscribe(unit-> Log.d("DDD",searchView.toString()));
-        // doesn't work yet : androidx.appcompat.widget.SearchView cannot be cast to android.widget.SearchView
+        RxSearchView.queryTextChangeEvents(searchView)
+                .debounce(5000, TimeUnit.MILLISECONDS)
+                .subscribe(unit-> Log.d("DDD",searchView.getQuery().toString() ));
 
         UserDataBase base = new UserDataBase(getBaseContext());
 

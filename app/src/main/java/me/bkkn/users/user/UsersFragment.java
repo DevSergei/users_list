@@ -1,4 +1,4 @@
-package me.bkkn.users.users;
+package me.bkkn.users.user;
 
 
 import android.os.Bundle;
@@ -11,8 +11,8 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import me.bkkn.users.App;
 import me.bkkn.users.R;
-import me.bkkn.users.users.github.GitHubUsersUserModel;
-import me.bkkn.users.users.overflow.OverflowUsersUserModel;
+import me.bkkn.users.user.github.GitHubUsersUserModel;
+import me.bkkn.users.user.overflow.OverflowUsersUserModel;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -65,7 +65,7 @@ public class UsersFragment extends Fragment implements UserPresenter.View {
         }
         presenter = ((App) getActivity().getApplication()).getUserPresenter(key);
         if (presenter == null) {
-            presenter = new UserPresenter(userModel, (((App) getActivity().getApplication()).getUserDatabase()));
+            presenter = new UserPresenter(userModel, (((App) getActivity().getApplication()).getDatabase()));
             ((App) getActivity().getApplication()).setUserPresenter(key, presenter);
         }
         presenter.attachView(this);

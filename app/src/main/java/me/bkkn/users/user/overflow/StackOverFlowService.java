@@ -1,4 +1,4 @@
-package me.bkkn.users.users.overflow;
+package me.bkkn.users.user.overflow;
 
 import io.reactivex.Single;
 import retrofit2.http.GET;

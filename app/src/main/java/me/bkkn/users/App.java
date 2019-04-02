@@ -7,29 +7,31 @@ import android.preference.PreferenceManager;
 
 import com.readystatesoftware.chuck.ChuckInterceptor;
 
-import java.io.IOException;
 import java.util.HashMap;
 
+import androidx.annotation.NonNull;
 import androidx.room.Room;
-import androidx.room.RoomDatabase;
+import androidx.room.migration.Migration;
+import androidx.sqlite.db.SupportSQLiteDatabase;
 import me.bkkn.users.db.AppDatabase;
-import me.bkkn.users.network.AddTokenInterceptor;
-import me.bkkn.users.network.ReceivedTokenInterceptor;
-import me.bkkn.users.users.UserDataBase;
-import me.bkkn.users.users.UserPresenter;
-import me.bkkn.users.users.github.GitHubService;
-import me.bkkn.users.users.overflow.StackOverFlowService;
-import okhttp3.Authenticator;
+import me.bkkn.users.user.UserDataBase;
+import me.bkkn.users.user.UserPresenter;
+import me.bkkn.users.user.github.GitHubService;
+import me.bkkn.users.user.overflow.StackOverFlowService;
 import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
-import okhttp3.Route;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class App extends Application {
+
+    public static final Migration MIGRATION_1_2 = new Migration(1,2) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
+            database.execSQL("ALTER TABLE USER ADD COLUMN age INTEGER DEFAULT 0");
+        }
+    };
 
     GitHubService gitHubService;
     StackOverFlowService stackOverFlowService;
@@ -43,11 +45,13 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
 
-        userDatabaseHelper = new UserDataBase(this);
-        userDatabase = userDatabaseHelper.getWritableDatabase();
+//        userDatabaseHelper = new UserDataBase(this);
+//        userDatabase = userDatabaseHelper.getWritableDatabase();
 
         database = Room.databaseBuilder(this,AppDatabase.class,"MyDatabase")
                 .allowMainThreadQueries()
+                .fallbackToDestructiveMigration()
+                .addMigrations(MIGRATION_1_2)
                 .build();
 
         preferences = PreferenceManager.getDefaultSharedPreferences(this);

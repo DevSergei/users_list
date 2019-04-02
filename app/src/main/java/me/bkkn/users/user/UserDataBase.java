@@ -1,18 +1,14 @@
-package me.bkkn.users.users;
+package me.bkkn.users.user;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.DatabaseErrorHandler;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import io.reactivex.Completable;
 import io.reactivex.Single;
 
 public class UserDataBase extends SQLiteOpenHelper {
@@ -52,9 +48,9 @@ public class UserDataBase extends SQLiteOpenHelper {
     public static void addUsers(List<User> users, SQLiteDatabase sqLiteDatabase) {
         for (User user : users) {
             ContentValues values = new ContentValues();
-            values.put(NAME, user.getName());
-            values.put(AVATAR, user.getAvatar());
-            values.put(USER_ID, user.getUserId());
+            values.put(NAME, user.name);
+            values.put(AVATAR, user.avatar);
+            values.put(USER_ID, user.userId);
             sqLiteDatabase.insert(USERS_TABLE_NAME, null, values);
         }
 /*        return Completable.fromAction(() -> {
@@ -79,7 +75,7 @@ public class UserDataBase extends SQLiteOpenHelper {
                 listCursor.moveToFirst();
                 if (!listCursor.isAfterLast()) {
                     do {
-                        User user = new User(listCursor.getString(1), listCursor.getString(2), listCursor.getInt(3));
+                        User user = new User(listCursor.getString(1), listCursor.getString(2), listCursor.getInt(3),0);
                         users.add(user);
                     }
                     while (listCursor.moveToNext());

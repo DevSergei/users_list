@@ -1,4 +1,4 @@
-package me.bkkn.users.users;
+package me.bkkn.users.user;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,15 +32,15 @@ public class UserRecycleAdapter extends RecyclerView.Adapter<UserRecycleAdapter.
     @Override
     public void onBindViewHolder(@NonNull UserViewHolder holder, int position) {
         User user = userList.get(position);
-        holder.name.setText(user.getName());
+        holder.name.setText(user.name);
         Glide.with(holder.itemView.getContext())
-            .load(user.getAvatar())
+            .load(user.avatar)
             .apply(RequestOptions.circleCropTransform()
                 .placeholder(R.drawable.avatar_placeholder)
                 .error(R.drawable.avatar_placeholder))
             .into(holder.avatar);
         if(position == getItemCount() - 1 && loadMoreListener != null){
-            loadMoreListener.loadMoreUsers(user.getUserId());
+            loadMoreListener.loadMoreUsers(user.userId);
         }
     }
 
