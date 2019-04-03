@@ -1,9 +1,11 @@
-package me.bkkn.users.users;
+package me.bkkn.users.user;
 
 
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
@@ -11,9 +13,11 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import me.bkkn.users.App;
 import me.bkkn.users.R;
-import me.bkkn.users.users.github.GitHubUsersUserModel;
-import me.bkkn.users.users.overflow.OverflowUsersUserModel;
+import me.bkkn.users.user.github.GitHubUsersUserModel;
+import me.bkkn.users.user.overflow.OverflowUsersUserModel;
 
+import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -65,10 +69,37 @@ public class UsersFragment extends Fragment implements UserPresenter.View {
         }
         presenter = ((App) getActivity().getApplication()).getUserPresenter(key);
         if (presenter == null) {
-            presenter = new UserPresenter(userModel, (((App) getActivity().getApplication()).getUserDatabase()));
+            presenter = new UserPresenter(userModel, (((App) getActivity().getApplication()).getDatabase()));
             ((App) getActivity().getApplication()).setUserPresenter(key, presenter);
         }
         presenter.attachView(this);
+
+        getLifecycle().addObserver(presenter);
+
+        /*LiveData draft below: */
+
+        class MyLiveData extends MutableLiveData<String>{
+            @Override
+            protected void onActive() {
+                super.onActive();
+                Log.d("DDD","has subscribers");
+            }
+
+            @Override
+            protected void onInactive() {
+                super.onInactive();
+                Log.d("DDD","no subscribers");
+            }
+        }
+
+        LiveData<String> liveData = new MyLiveData();
+        liveData.observe(this, string -> {
+            Log.d("DDD",string);
+        });
+
+
+        new Handler().postDelayed(()-> liveData.getValue(),300 );
+
 
         return view;
     }

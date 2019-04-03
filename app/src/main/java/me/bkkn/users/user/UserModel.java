@@ -1,10 +1,8 @@
-package me.bkkn.users.users;
+package me.bkkn.users.user;
 
 import java.util.List;
 
-import io.reactivex.Observable;
 import io.reactivex.Single;
-import me.bkkn.users.users.User;
 
 public interface UserModel {
 

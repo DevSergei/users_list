@@ -1,4 +1,4 @@
-package me.bkkn.users.users;
+package me.bkkn.users.user;
 
 import java.util.Objects;
 
@@ -9,29 +9,20 @@ import androidx.room.PrimaryKey;
 @Entity(tableName = "user")
 public final class User {
     @PrimaryKey(autoGenerate = true)
-    private long userId;
-//    @ColumnInfo(name = "title")
-    private String name;
+    public long userId;
+    //    @ColumnInfo(name = "title")
+    public String name;
 
-    private String avatar;
+    public String avatar;
+
+    public int age;
 
 
-    public User(String name, String avatar, long userId) {
+    public User(String name, String avatar, long userId, int age) {
         this.name = name;
         this.avatar = avatar;
         this.userId = userId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getAvatar() {
-        return avatar;
-    }
-
-    public long getUserId() {
-        return userId;
+        this.age = age;
     }
 
     @Override

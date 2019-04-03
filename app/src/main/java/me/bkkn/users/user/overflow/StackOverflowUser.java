@@ -1,8 +1,8 @@
-package me.bkkn.users.users.overflow;
+package me.bkkn.users.user.overflow;
 
 import com.google.gson.annotations.SerializedName;
 
-import me.bkkn.users.users.User;
+import me.bkkn.users.user.User;
 
 public class StackOverflowUser {
     @SerializedName("display_name") String name;
@@ -10,6 +10,6 @@ public class StackOverflowUser {
     @SerializedName("account_id") long userId;
 
     public User mapToUser(){
-        return new User(name, avatar, userId);
+        return new User(name, avatar, userId,0);
     }
 }
