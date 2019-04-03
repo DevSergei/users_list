@@ -8,6 +8,8 @@ import com.readystatesoftware.chuck.ChuckInterceptor;
 
 import java.util.HashMap;
 
+import javax.inject.Inject;
+
 import androidx.annotation.NonNull;
 import androidx.room.Room;
 import androidx.room.migration.Migration;
@@ -25,7 +27,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class App extends Application {
 
-    public static final Migration MIGRATION_1_2 = new Migration(1,2) {
+    public static final Migration MIGRATION_1_2 = new Migration(1, 2) {
         @Override
         public void migrate(@NonNull SupportSQLiteDatabase database) {
             database.execSQL("ALTER TABLE USER ADD COLUMN age INTEGER DEFAULT 0");
@@ -36,23 +38,21 @@ public class App extends Application {
     StackOverFlowService stackOverFlowService;
     HashMap<String, UserPresenter> userPresenters = new HashMap<>();
     SharedPreferences preferences;
-    UserDataBase userDatabaseHelper;
-//    SQLiteDatabase userDatabase;
     AppDatabase database;
+    AppComponent appComponent;
+
+    @Inject OkHttpClient okHttpClient;
 
     @Override
     public void onCreate() {
         super.onCreate();
-
-//        userDatabaseHelper = new UserDataBase(this);
-//        userDatabase = userDatabaseHelper.getWritableDatabase();
-
-        database = Room.databaseBuilder(this,AppDatabase.class,"MyDatabase")
+        appComponent = DaggerAppComponent.create();
+        appComponent.injectApp(this);
+        database = Room.databaseBuilder(this, AppDatabase.class, "MyDatabase")
                 .allowMainThreadQueries()
                 .fallbackToDestructiveMigration()
                 .addMigrations(MIGRATION_1_2)
                 .build();
-
         preferences = PreferenceManager.getDefaultSharedPreferences(this);
         createNetworkServices();
     }
@@ -70,21 +70,7 @@ public class App extends Application {
     }
 
     private void createNetworkServices() {
-        HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
-        ChuckInterceptor chuckInterceptor = new ChuckInterceptor(this);
-        OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                .addNetworkInterceptor(httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY))
-                .addNetworkInterceptor(chuckInterceptor)
-//                .addInterceptor(new ReceivedTokenInterceptor(preferences))
-//                .addInterceptor(new AddTokenInterceptor(preferences))
-//                .authenticator((route, response) -> {
-//                    if (response.code() == 401) {
-////                        logout();
-//                    }
-//                    return null;
-//                })
-                .build();
-
+//        OkHttpClient okHttpClient = appComponent.getOkHttpClient();
         Retrofit gitHubRetrofit = new Retrofit.Builder()
                 .baseUrl("https://api.github.com/")
                 .client(okHttpClient)
@@ -109,11 +95,12 @@ public class App extends Application {
         }
         userPresenters.put(key, userPresenter);
     }
-    public UserPresenter getUserPresenter(String key){
+
+    public UserPresenter getUserPresenter(String key) {
         return userPresenters.get(key);
     }
 
- //   public SQLiteDatabase getUserDatabase() {
+    //   public SQLiteDatabase getUserDatabase() {
 //        return userDatabase;
- //   }
+    //   }
 }
