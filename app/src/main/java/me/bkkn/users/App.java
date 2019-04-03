@@ -2,7 +2,6 @@ package me.bkkn.users;
 
 import android.app.Application;
 import android.content.SharedPreferences;
-import android.database.sqlite.SQLiteDatabase;
 import android.preference.PreferenceManager;
 
 import com.readystatesoftware.chuck.ChuckInterceptor;
@@ -38,7 +37,7 @@ public class App extends Application {
     HashMap<String, UserPresenter> userPresenters = new HashMap<>();
     SharedPreferences preferences;
     UserDataBase userDatabaseHelper;
-    SQLiteDatabase userDatabase;
+//    SQLiteDatabase userDatabase;
     AppDatabase database;
 
     @Override

@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
                 .debounce(5000, TimeUnit.MILLISECONDS)
                 .subscribe(unit-> Log.d("DDD",searchView.getQuery().toString() ));
 
-        UserDataBase base = new UserDataBase(getBaseContext());
+//        UserDataBase base = new UserDataBase(getBaseContext());
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()

@@ -4,6 +4,9 @@ import android.util.Log;
 
 import java.util.List;
 
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleObserver;
+import androidx.lifecycle.OnLifecycleEvent;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -11,7 +14,7 @@ import io.reactivex.schedulers.Schedulers;
 import me.bkkn.users.db.AppDatabase;
 import me.bkkn.users.db.UserDao;
 
-public class UserPresenter {
+public class UserPresenter implements LifecycleObserver {
     public interface View {
         void onUserListLoaded(List<User> userList);
 
@@ -42,13 +45,17 @@ public class UserPresenter {
         this.view = null;
     }
 
+    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     public void stopLoading() {
+        Log.d("DDD", "onStop dispose");
         if (disposable != null) {
             disposable.dispose();
         }
     }
 
+    @OnLifecycleEvent(Lifecycle.Event.ON_START)
     private void loadUsers() {
+        Log.d("DDD", "Loading Users");
         disposable = userModel.getUsers()
 //                .delay(5, TimeUnit.SECONDS)
                 .doOnSuccess(list -> userList = list)
@@ -58,7 +65,7 @@ public class UserPresenter {
                 .doOnError(error -> Log.d("DDDD", error.getMessage()))
                 .onErrorResumeNext(error -> database.userDao().getAllUsers()
 //                        .observe(this, userList)
-                        .flatMap(users -> users.isEmpty() ? Single.error(new RuntimeException("No users in DB")) : Single.just(users))
+                                .flatMap(users -> users.isEmpty() ? Single.error(new RuntimeException("No users in DB")) : Single.just(users))
                 )
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
