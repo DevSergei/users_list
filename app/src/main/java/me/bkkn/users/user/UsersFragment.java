@@ -13,8 +13,6 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import me.bkkn.users.App;
 import me.bkkn.users.R;
-import me.bkkn.users.user.github.GitHubUsersUserModel;
-import me.bkkn.users.user.overflow.OverflowUsersUserModel;
 
 import android.os.Handler;
 import android.util.Log;
@@ -25,6 +23,8 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import java.util.List;
+
+import javax.inject.Inject;
 
 public class UsersFragment extends Fragment implements UserPresenter.View {
 
@@ -37,10 +37,10 @@ public class UsersFragment extends Fragment implements UserPresenter.View {
     @BindView(R.id.progress)
     ProgressBar progressBar;
 
+    private String key;
     private Unbinder unbinder;
     private UserRecycleAdapter adapter;
-    private UserPresenter presenter;
-    private String key;
+    @Inject UserPresenter presenter;
 
     public static UsersFragment newInstance(String modelName) {
         Bundle args = new Bundle();
@@ -54,24 +54,18 @@ public class UsersFragment extends Fragment implements UserPresenter.View {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_git_hub_users, container, false);
+        ((App)getActivity().getApplication()).getAppComponent().createUserComponent().injectUserFragment(this);
         unbinder = ButterKnife.bind(this, view);
         adapter = new UserRecycleAdapter();
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(adapter);
         recyclerView.setHasFixedSize(true);
 
-        UserModel userModel;
         key = getArguments().getString(KEY);
-        if (key.equals(GITHUB)) {
-            userModel = new GitHubUsersUserModel(((App) getActivity().getApplication()).getGitHubService());
-        }else{
-            userModel = new OverflowUsersUserModel(((App) getActivity().getApplication()).getStackOverFlowService());
-        }
-        presenter = ((App) getActivity().getApplication()).getUserPresenter(key);
-        if (presenter == null) {
-            presenter = new UserPresenter(userModel, (((App) getActivity().getApplication()).getDatabase()));
-            ((App) getActivity().getApplication()).setUserPresenter(key, presenter);
-        }
+//        if (key.equals(GITHUB)) {
+//        }else{
+//            userModel = new OverflowUsersUserModel(getStackOverFlowService);
+//        }
         presenter.attachView(this);
 
         getLifecycle().addObserver(presenter);
@@ -110,8 +104,6 @@ public class UsersFragment extends Fragment implements UserPresenter.View {
         presenter.detachView();
         if (isRemoving()) {
             presenter.stopLoading();
-            presenter = null;
-            ((App) getActivity().getApplication()).setUserPresenter(key,null);
         }
         unbinder.unbind();
     }
