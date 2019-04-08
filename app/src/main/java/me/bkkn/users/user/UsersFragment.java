@@ -1,11 +1,16 @@
 package me.bkkn.users.user;
 
 
+import android.app.Application;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
@@ -40,7 +45,8 @@ public class UsersFragment extends Fragment implements UserPresenter.View {
     private String key;
     private Unbinder unbinder;
     private UserRecycleAdapter adapter;
-    @Inject UserPresenter presenter;
+    @Inject
+    UserPresenter presenter;
 
     public static UsersFragment newInstance(String modelName) {
         Bundle args = new Bundle();
@@ -54,7 +60,7 @@ public class UsersFragment extends Fragment implements UserPresenter.View {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_git_hub_users, container, false);
-        ((App)getActivity().getApplication()).getAppComponent().createUserComponent().injectUserFragment(this);
+        ViewModelProviders.of(this).get(FragmentModel.class).getUserComponent().injectUserFragment(this);
         unbinder = ButterKnife.bind(this, view);
         adapter = new UserRecycleAdapter();
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -72,27 +78,27 @@ public class UsersFragment extends Fragment implements UserPresenter.View {
 
         /*LiveData draft below: */
 
-        class MyLiveData extends MutableLiveData<String>{
+        class MyLiveData extends MutableLiveData<String> {
             @Override
             protected void onActive() {
                 super.onActive();
-                Log.d("DDD","has subscribers");
+                Log.d("DDD", "has subscribers");
             }
 
             @Override
             protected void onInactive() {
                 super.onInactive();
-                Log.d("DDD","no subscribers");
+                Log.d("DDD", "no subscribers");
             }
         }
 
         LiveData<String> liveData = new MyLiveData();
         liveData.observe(this, string -> {
-            Log.d("DDD",string);
+            Log.d("DDD", string);
         });
 
 
-        new Handler().postDelayed(()-> liveData.getValue(),300 );
+        new Handler().postDelayed(() -> liveData.getValue(), 300);
 
 
         return view;
@@ -119,5 +125,24 @@ public class UsersFragment extends Fragment implements UserPresenter.View {
         Toast.makeText(getContext(), R.string.error_message, Toast.LENGTH_SHORT).show();
         progressBar.setVisibility(View.GONE);
 
+    }
+
+    public static class FragmentModel extends AndroidViewModel {
+        UserComponent userComponent;
+
+        public FragmentModel(@NonNull Application application) {
+            super(application);
+            userComponent = ((App) application).getAppComponent().createUserComponent();
+        }
+
+        public UserComponent getUserComponent() {
+            return userComponent;
+        }
+
+        @Override
+        protected void onCleared() {
+            super.onCleared();
+            userComponent = null;
+        }
     }
 }

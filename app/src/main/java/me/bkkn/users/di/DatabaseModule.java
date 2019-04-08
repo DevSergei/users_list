@@ -20,6 +20,7 @@ public class DatabaseModule {
         }
     };
     @Provides
+    @PerApplication
     AppDatabase provideDatabase(Context context){
         return Room.databaseBuilder(context, AppDatabase.class, "MyDatabase")
                 .allowMainThreadQueries()

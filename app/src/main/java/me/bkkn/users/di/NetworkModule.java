@@ -2,6 +2,11 @@ package me.bkkn.users.di;
 
 import com.readystatesoftware.chuck.ChuckInterceptor;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
+import javax.inject.Qualifier;
+
 import dagger.Module;
 import dagger.Provides;
 import me.bkkn.users.user.github.GitHubService;
@@ -16,7 +21,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class NetworkModule {
 
     @Provides
-//    @PerApplication
+    @PerApplication
     GitHubService provideGitHubService(OkHttpClient okHttpClient) {
         return new Retrofit.Builder()
                 .baseUrl("https://api.github.com/")
@@ -27,7 +32,7 @@ public class NetworkModule {
                 .create(GitHubService.class);
     }
     @Provides
-//    @PerApplication
+    @PerApplication
     StackOverFlowService provideStackOverflowService(OkHttpClient okHttpClient) {
         return new Retrofit.Builder()
                 .baseUrl("https://api.stackexchange.com/2.2/")
@@ -37,7 +42,9 @@ public class NetworkModule {
                 .build()
                 .create(StackOverFlowService.class);
     }
+
     @Provides
+    @PerApplication
     OkHttpClient provideOkHttpClient() {
         HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
@@ -45,6 +52,14 @@ public class NetworkModule {
                 .build();
         return okHttpClient;
     }
+   @Provides
+   @PerApplication
+   @Private
+    HttpLoggingInterceptor provideHttpLoggingInterceptor() {
+        return new HttpLoggingInterceptor();
+    }
 
-
+    @Qualifier
+    @Retention(RetentionPolicy.RUNTIME)
+    private @interface Private{}
 }
